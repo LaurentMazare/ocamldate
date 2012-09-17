@@ -56,6 +56,9 @@ type gregorian = {
   g_year: int;
 }
 
+let string_of_gregorian {g_day; g_month; g_year} =
+  Printf.sprintf "%d %s %d" g_day (string_of_month g_month) g_year
+
 let is_leap_year y =
   y mod 400 == 0 || (y mod 4 == 0 && y mod 100 != 0)
 
@@ -91,8 +94,16 @@ let days_in_month y = function
 let days_in_year y =
   if is_leap_year y then 366 else 365
 
-let date_of_gregorian {g_day; g_month; g_year} =
+let date_of_gregorian g =
+  let {g_day; g_month; g_year} = g in
   if g_year < 1970 then failwith "date_of_gregorian: input before year 1970.";
+  if g_day <= 0 || g_day > days_in_month g_year g_month then
+    begin
+      let msg =
+        Printf.sprintf "date_of_gregorian: non existing day %s." (string_of_gregorian g)
+      in
+      failwith msg
+    end;
   let rec aux_year y acc =
     if y == g_year then acc
     else aux_year (y+1) (acc + days_in_year y)
@@ -111,6 +122,7 @@ let date_of_gregorian {g_day; g_month; g_year} =
   d_month + d_year + g_day
 
 let gregorian_of_date d =
+  if d < 0 then failwith "gregorian_of_date: negative input.";
   let rec aux_year y d =
     if d <= days_in_year y then y, d
     else aux_year (y+1) (d - days_in_year y)
@@ -132,6 +144,8 @@ let gregorian_of_date d =
   let g_month = Option.extract g_month in
   {g_day = g_day; g_month = g_month; g_year = g_year}
 
+let string_of_date d = string_of_gregorian (gregorian_of_date d)
+
 let week_day_of_date d =
   match d mod 7 with
   | 1 -> Thursday
@@ -142,10 +156,6 @@ let week_day_of_date d =
   | 6 -> Tuesday
   | 0 -> Wednesday
   | _ -> failwith "Not a correct day in day_of_week"
-
-let string_of_date d =
-  let {g_day; g_month; g_year} = gregorian_of_date d in
-  Printf.sprintf "%d %s %d" g_day (string_of_month g_month) g_year
 
 (* Tests are stored here for now. Todo: move them to regtest. *)
 let _ =

@@ -17,6 +17,7 @@ type week_day =
 
 val week_day_of_date: t -> week_day
 val string_of_week_day: week_day -> string
+val is_weekend: t -> bool
 
 (* Gregorian functions *)
 type month =

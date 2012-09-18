@@ -157,6 +157,10 @@ let week_day_of_date d =
   | 0 -> Wednesday
   | _ -> failwith "Not a correct day in day_of_week"
 
+let is_weekend d =
+  let d7 = d mod 7 in
+  d7 == 3 or d7 == 4
+
 let add_days d i = d + i
 let days_between d1 d2 = d1 - d2
 let init_date = 1

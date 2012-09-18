@@ -2,7 +2,7 @@ open Option
 (* Date related functions *)
 
 (* Private type for dates, number of days since 1/1/70 *)
-type date = int
+type t = int
 
 type week_day =
   | Monday
@@ -157,9 +157,6 @@ let week_day_of_date d =
   | 0 -> Wednesday
   | _ -> failwith "Not a correct day in day_of_week"
 
-(* Tests are stored here for now. Todo: move them to regtest. *)
-let _ =
-  let d = {g_day = 17; g_month = September; g_year = 2012} in
-  Format.printf "%s\n" (string_of_week_day (week_day_of_date
-  (date_of_gregorian d)));
-  Format.printf "%s\n" (string_of_date (date_of_gregorian d))
+let add_days d i = d + i
+let days_between d1 d2 = d1 - d2
+let init_date = 1

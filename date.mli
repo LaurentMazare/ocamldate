@@ -1,5 +1,11 @@
-type date
+(* Generic date functions *)
+type t
+val init_date: t
+val add_days: t -> int -> t
+val string_of_date: t -> string
+val days_between: t -> t -> int
 
+(* Week Day functions *)
 type week_day =
   | Monday
   | Tuesday
@@ -9,6 +15,10 @@ type week_day =
   | Saturday
   | Sunday
 
+val week_day_of_date: t -> week_day
+val string_of_week_day: week_day -> string
+
+(* Gregorian functions *)
 type month =
   | January
   | February
@@ -30,7 +40,5 @@ type gregorian = {
   g_year: int;
 }
 
-val date_of_gregorian: gregorian -> date
-val gregorian_of_date: date -> gregorian
-val week_day_of_date: date -> week_day
-val string_of_date: date -> string
+val date_of_gregorian: gregorian -> t
+val gregorian_of_date: t -> gregorian

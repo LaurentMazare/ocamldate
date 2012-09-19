@@ -2,30 +2,33 @@ module DateSet = Set.Make(
   struct
     let compare = Pervasives.compare
         type t = Date.t
-  end )
+  end)
 
 module Calendar =
   struct
-    type t =
-      | C_Empty
+    type _t =
       | C_WeekEnds
       | C_Explicit of DateSet.t
-      | C_Union of t list
 
-    let union l = C_Union l
-    let empty = C_Empty
+    type t = _t list
+
+    let union l = List.flatten l
+    let empty = []
+    let of_string _ = []
   end
 
 open Calendar
-let rec in_calendar d = function
-  | C_Empty -> false
-  | C_WeekEnds -> Date.is_weekend d
-  | C_Explicit l -> DateSet.mem d l
-  | C_Union cals ->
-      List.fold_left
-      (fun acc cal -> acc || in_calendar d cal)
-      false
-      cals
+let in_calendar d cals =
+  List.fold_left
+  (fun acc cal ->
+    if acc then true
+    else
+      match cal with
+      | C_WeekEnds -> Date.is_weekend d
+      | C_Explicit set -> DateSet.mem d set
+  )
+  false
+  cals
 
 let is_business_day d cal = not (in_calendar d cal)
 
@@ -47,6 +50,35 @@ type t =
   | Adjust of t * Calendar.t
   | Shift of t * date_shift
 
-let eval = function
+(* Todo: implement this in an optimized way         *)
+(* as the current version is *really* *really* slow *)
+let add_business_days d ds_number cal =
+  if ds_number < 0 then failwith "Negative number of days.";
+  let rec adjust d =
+    if is_business_day d cal then d
+    else adjust (Date.add_days d 1)
+  in
+  let rec aux n d =
+    if n == 0 then adjust d
+    else aux (n-1) (adjust (Date.add_days d 1))
+  in
+  aux ds_number d
+
+(* Todo: roll convention + implement *)
+let add_months d _ _ = d
+
+let rec eval = function
   | Date d -> d
-  | _ -> failwith "Todo"
+  | Adjust (d, cal) ->
+      let d = eval d in
+      add_business_days d 0 cal
+  | Shift (d, {ds_number; ds_type; ds_calendar}) ->
+      let d = eval d in
+      match ds_type with
+      | DS_Days -> Date.add_days d ds_number
+      | DS_BusinessDays -> add_business_days d ds_number ds_calendar
+      | DS_Weeks ->
+          let d = Date.add_days d (7 * ds_number) in
+          add_business_days d 0 ds_calendar
+      | DS_Months -> add_months d ds_number ds_calendar
+      | DS_Years -> add_months d (12 * ds_number) ds_calendar

@@ -34,6 +34,9 @@ type month =
   | November
   | December
 
+val month_of_int: int -> month
+val int_of_month: month -> int
+val days_in_month: int -> month -> int
 
 type gregorian = {
   g_day: int;

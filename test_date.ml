@@ -1,10 +1,19 @@
 open Date
 (* Tests are stored here for now. Todo: move them to regtest. *)
 let _ =
-  let d = {g_day = 17; g_month = September; g_year = 2012} in
-  Format.printf "%s\n" (string_of_week_day (week_day_of_date
-  (date_of_gregorian d)));
-  Format.printf "%s\n" (string_of_date (date_of_gregorian d))
+  let tests = [
+    (17, September, 2012, Monday);
+    (16, January, 1980, Wednesday);
+    (26, May, 1987, Tuesday);
+  ]
+  in
+  let check (g_day, g_month, g_year, week_day) =
+    let d = {g_day; g_month; g_year} in
+    let wd = week_day_of_date (date_of_gregorian d) in
+    let ok = if wd == week_day then "OK" else "FAILED" in
+    Format.printf "%s %s\n" (string_of_date (date_of_gregorian d)) ok
+  in
+  List.iter check tests
 
 let _ =
   let rec aux nb_tests =

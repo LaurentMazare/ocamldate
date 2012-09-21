@@ -1,5 +1,11 @@
 open Date
-(* Tests are stored here for now. Todo: move them to regtest. *)
+let nb_test = ref 0
+let assert_ cond str =
+  let status = if cond then "\x1b[1;32;mOK" else "\x1b[1;31;mFAILED" in
+  nb_test := !nb_test + 1;
+  Format.printf "%-3d %s: %s\n" !nb_test str status;
+  assert cond
+
 let _ =
   let tests = [
     (17, September, 2012, Monday);
@@ -10,8 +16,7 @@ let _ =
   let check (g_day, g_month, g_year, week_day) =
     let d = {g_day; g_month; g_year} in
     let wd = week_day_of_date (date_of_gregorian d) in
-    let ok = if wd == week_day then "OK" else "FAILED" in
-    Format.printf "%s %s\n" (string_of_date (date_of_gregorian d)) ok
+    assert_ (wd == week_day) (string_of_date (date_of_gregorian d))
   in
   List.iter check tests
 
@@ -25,4 +30,4 @@ let _ =
       let d' = date_of_gregorian g in
       if d != d' then false else aux (nb_tests - 1)
   in
-  Format.printf "Fixpoint test: %s\n" (if aux (365 * 10) then "OK" else "FAILED")
+  assert_ (aux (365 * 10)) "Fixpoint test"

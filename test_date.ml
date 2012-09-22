@@ -31,3 +31,20 @@ let _ =
       if d != d' then false else aux (nb_tests - 1)
   in
   assert_ (aux (365 * 10)) "Fixpoint test"
+
+let _ =
+  let tests = [
+    (17, September, 2012, "17sep12");
+    (16, January, 1980, "16Jan80");
+    (26, May, 1987, "26MAY87");
+    (17, September, 2012, "17sep2012");
+    (16, January, 1980, "16Jan1980");
+    (26, May, 1987, "26MAY1987");
+  ]
+  in
+  let check (g_day, g_month, g_year, str) =
+    let d = date_of_gregorian {g_day; g_month; g_year} in
+    let d' = date_of_string str in
+    assert_ (d == d') str
+  in
+  List.iter check tests

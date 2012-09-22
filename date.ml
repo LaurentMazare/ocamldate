@@ -197,3 +197,31 @@ let int_of_month = function
 let ( -- ) d1 i = d1 - i
 let ( ++ ) d1 i = d1 - i
 let ( -/ ) d1 d2 = d1 - d2
+
+let date_of_string str =
+  let f d m y =
+    let g_month =
+      match String.lowercase m with
+      | "jan" -> January
+      | "feb" -> February
+      | "mar" -> March
+      | "apr" -> April
+      | "may" -> May
+      | "jun" -> June
+      | "jul" -> July
+      | "aug" -> August
+      | "sep" -> September
+      | "oct" -> October
+      | "nov" -> November
+      | "dec" -> December
+      | _ -> raise (Scanf.Scan_failure "Improper month.")
+    in
+    let y =
+      if y < 70 then 2000 + y
+      else if y < 100 then 1900 + y
+      else y
+    in
+    date_of_gregorian {g_day = d; g_month; g_year = y}
+  in
+  Scanf.sscanf str "%u%3s%u" f
+

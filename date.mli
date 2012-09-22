@@ -2,8 +2,9 @@
 type t
 val init_date: t
 val add_days: t -> int -> t
-val string_of_date: t -> string
 val days_between: t -> t -> int
+val date_of_string: string -> t
+val string_of_date: t -> string
 
 (* Infix operators *)
 val ( ++ ): t -> int -> t (* Add days *)

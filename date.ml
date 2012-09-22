@@ -194,4 +194,6 @@ let int_of_month = function
   | November -> 11
   | December -> 12
 
-
+let ( -- ) d1 i = d1 - i
+let ( ++ ) d1 i = d1 - i
+let ( -/ ) d1 d2 = d1 - d2

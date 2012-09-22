@@ -5,6 +5,11 @@ val add_days: t -> int -> t
 val string_of_date: t -> string
 val days_between: t -> t -> int
 
+(* Infix operators *)
+val ( ++ ): t -> int -> t (* Add days *)
+val ( -- ): t -> int -> t (* Substract days *)
+val ( -/ ): t -> t -> int (* Days between *)
+
 (* Week Day functions *)
 type week_day =
   | Monday
@@ -37,6 +42,7 @@ type month =
 val month_of_int: int -> month
 val int_of_month: month -> int
 val days_in_month: int -> month -> int
+val is_leap_year: int -> bool
 
 type gregorian = {
   g_day: int;

@@ -16,13 +16,13 @@ let _ =
   let check (g_day, g_month, g_year, week_day) =
     let d = {g_day; g_month; g_year} in
     let wd = week_day_of_date (date_of_gregorian d) in
-    assert_ (wd == week_day) (string_of_date (date_of_gregorian d))
+    assert_ (wd = week_day) (string_of_date (date_of_gregorian d))
   in
   List.iter check tests
 
 let _ =
   let rec aux nb_tests =
-    if nb_tests == 0 then
+    if nb_tests = 0 then
       true
     else
       let d = add_days init_date (10 * nb_tests) in
@@ -38,13 +38,13 @@ let _ =
     (16, January, 1980, "16Jan80");
     (26, May, 1987, "26MAY87");
     (17, September, 2012, "17sep2012");
-    (16, January, 1980, "16Jan1980");
+    (16, January, 1980, "16January1980");
     (26, May, 1987, "26MAY1987");
   ]
   in
   let check (g_day, g_month, g_year, str) =
     let d = date_of_gregorian {g_day; g_month; g_year} in
     let d' = date_of_string str in
-    assert_ (d == d') str
+    assert_ (d = Option.extract d') str
   in
   List.iter check tests

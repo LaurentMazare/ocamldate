@@ -3,7 +3,7 @@ type t
 val init_date: t
 val add_days: t -> int -> t
 val days_between: t -> t -> int
-val date_of_string: string -> t
+val date_of_string: string -> t Option.option
 val string_of_date: t -> string
 
 (* Infix operators *)

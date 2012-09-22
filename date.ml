@@ -200,6 +200,9 @@ let ( -/ ) d1 d2 = d1 - d2
 
 let date_of_string str =
   let f d m y =
+    if String.length m < 3 then
+      failwith "Date.date_of_string: improper month.";
+    let m = String.sub m 0 3 in
     let g_month =
       match String.lowercase m with
       | "jan" -> January
@@ -214,14 +217,17 @@ let date_of_string str =
       | "oct" -> October
       | "nov" -> November
       | "dec" -> December
-      | _ -> raise (Scanf.Scan_failure "Improper month.")
+      | _ -> 
+        failwith "Date.date_of_string: improper month.";
     in
     let y =
       if y < 70 then 2000 + y
       else if y < 100 then 1900 + y
       else y
     in
-    date_of_gregorian {g_day = d; g_month; g_year = y}
+    Some (date_of_gregorian {g_day = d; g_month; g_year = y})
   in
-  Scanf.sscanf str "%u%3s%u" f
+  try
+    Scanf.sscanf str "%u%[a-zA-Z]%u" f
+  with _ -> None
 

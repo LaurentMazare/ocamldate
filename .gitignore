@@ -1,3 +1,7 @@
+.depend
+.depend.input
+test_date
+._*
 *.annot
 *.cmo
 *.cma

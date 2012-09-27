@@ -1,7 +1,7 @@
 open Date
 
-let act_365 d1 d2 = float_of_int (d1 -/ d2) /. 365.0
-let act_360 d1 d2 = float_of_int (d1 -/ d2) /. 360.0
+let act_365 d1 d2 = float_of_int (d2 -/ d1) /. 365.0
+let act_360 d1 d2 = float_of_int (d2 -/ d1) /. 360.0
 let days_of_year y = if is_leap_year y then 366.0 else 365.0
 
 let act_act d1 d2 =
@@ -20,9 +20,9 @@ let act_act d1 d2 =
     float_of_int (g1.g_year - g2.g_year) +. dcf1 -. dcf2
 
 let gen_30_360 y1 y2 m1 m2 d1 d2 =
-  let nb_years = y1 - y2 in
-  let nb_months = int_of_month m1 - int_of_month m2 in
-  let dcf_day = float_of_int (d1 - d2) /. 360. in
+  let nb_years = y2 - y1 in
+  let nb_months = int_of_month m2 - int_of_month m1 in
+  let dcf_day = float_of_int (d2 - d1) /. 360. in
   float_of_int nb_years +. float_of_int nb_months /. 12. +. dcf_day
 
 let d_30_360 d1 d2 =

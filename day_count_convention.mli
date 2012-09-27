@@ -9,5 +9,6 @@ type t =
   | D_30_360
   | D_30E_360
   | D_30E_360_ISDA
+  | D_1_1_ISDA
 
 val dcf: t -> Date.t -> Date.t -> float

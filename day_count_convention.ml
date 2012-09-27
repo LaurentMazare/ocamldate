@@ -55,6 +55,7 @@ type t =
   | D_30_360
   | D_30E_360
   | D_30E_360_ISDA
+  | D_1_1_ISDA
 
 let dcf = function
   | D_Act_365 -> act_365
@@ -63,3 +64,4 @@ let dcf = function
   | D_30_360 -> d_30_360
   | D_30E_360 -> d_30e_360
   | D_30E_360_ISDA -> d_30e_360_isda
+  | D_1_1_ISDA -> fun _ _ -> 1.0

@@ -11,16 +11,14 @@ type interpolation =
 type extrapolation =
   | E_none
   | E_constant
+  | E_linear of float
 
-type 'a float_curve = {
-  c_data: ('a, float) curve_data;
+type t = {
+  c_data: (float, float) curve_data;
   c_interpolation: interpolation;
   c_left: extrapolation;
   c_right: extrapolation;
-  c_diff: 'a -> 'a -> float
 }
-
-type t = float float_curve
 
 val mk_curve:
   ?inter: interpolation ->

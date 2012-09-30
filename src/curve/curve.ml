@@ -15,7 +15,7 @@ let option_of_curve (x_array, y_array) x =
     None
   else
     let rec aux left right = (* Tail-rec bisection search *)
-      if right - left = 1 then (
+      if right - left <= 1 then (
         if x == x_array.(left) then Some y_array.(left)
         else if x == x_array.(right) then Some y_array.(right)
         else None
@@ -44,16 +44,14 @@ type interpolation =
 type extrapolation =
   | E_none
   | E_constant
+  | E_linear of float
 
-type 'a float_curve = {
-  c_data: ('a, float) curve_data;
+type t = {
+  c_data: (float, float) curve_data;
   c_interpolation: interpolation;
   c_left: extrapolation;
   c_right: extrapolation;
-  c_diff: 'a -> 'a -> float
 }
-
-type t = float float_curve
 
 let mk_curve ?(inter = I_none) ?(l_extr = E_none) ?(r_extr = E_none) data_list =
   {
@@ -61,7 +59,47 @@ let mk_curve ?(inter = I_none) ?(l_extr = E_none) ?(r_extr = E_none) data_list =
     c_interpolation = inter;
     c_left = l_extr;
     c_right = r_extr;
-    c_diff = fun x y -> y -. x
   }
 
-let eval curve x = x (* todo *)
+(* In this function, we assume that x is between x_array.(0)
+   * and x_array.(n-1). and x_array is not empty. *)
+let linear_interpolation (x_array, y_array) x =
+  let rec aux left right =
+    if right - left <= 1 then (
+      if x == x_array.(left) then y_array.(left)
+      else if x == x_array.(right) then y_array.(right)
+      else
+        let c =
+          (x -. x_array.(left)) /. (x_array.(right) -. x_array.(left))
+        in
+        y_array.(left) +. c *. (y_array.(right) -. y_array.(left))
+    )
+    else
+      let mid = (left + right) / 2 in
+      let x_mid = x_array.(mid) in
+      if x < x_mid then aux left mid else aux mid right
+  in
+  aux 0 (Array.length x_array - 1)
+
+
+let eval {c_data; c_interpolation; c_left; c_right} x =
+  let x_array, y_array = c_data in
+  let x_length = Array.length x_array in
+  if x_length = 0 then
+    failwith "Curve.eval: empty curve data.";
+  if x < x_array.(0) then
+    match c_left with
+    | E_none -> failwith "Curve.eval: no left extrapolation."
+    | E_constant -> y_array.(0)
+    | E_linear slope -> y_array.(0) +. slope *. (x_array.(0) -. x)
+  else if x > x_array.(x_length - 1) then
+    match c_right with
+    | E_none -> failwith "Curve.eval: no left extrapolation."
+    | E_constant -> y_array.(x_length-1)
+    | E_linear slope ->
+        y_array.(x_length-1) +. slope *. (x -. x_array.(x_length-1))
+  else
+    match c_interpolation with
+    | I_none -> data_of_curve c_data x
+    | I_linear -> linear_interpolation c_data x
+

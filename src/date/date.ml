@@ -1,4 +1,3 @@
-open Option
 (* Date related functions *)
 
 (* Private type for dates, number of days since 1/1/70 *)
